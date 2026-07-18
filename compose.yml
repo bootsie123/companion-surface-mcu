@@ -1,0 +1,15 @@
+services:
+  companion:
+    image: ghcr.io/bitfocus/companion/companion:5.1.0-9669-main-709f0fa32a
+    restart: unless-stopped
+    ports:
+      - '8000:8000' # Admin UI
+      - '5004:5004/udp'
+      - '16622:16622' # Companion Satellite (TCP)
+      - '16623:16623' # Companion Satellite (WS)
+    volumes:
+      - companion-config:/companion
+      - ./:/app/module-local-dev/dev
+
+volumes:
+  companion-config:

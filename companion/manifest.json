@@ -1,0 +1,29 @@
+{
+	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
+	"type": "surface",
+	"id": "mcu-rtp-midi",
+	"name": "Mackie Control RTP MIDI",
+	"shortname": "MCU RTP MIDI",
+	"description": "Discovers Mackie Control compatible surfaces over RTP MIDI",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": "git+https://github.com/bootsie123/companion-surface-mcu.git",
+	"bugs": "https://github.com/bootsie123/companion-surface-mcu/issues",
+	"maintainers": [
+		{
+			"name": "John Arrandale",
+			"email": "bootsie227@gmail.com"
+		}
+	],
+	"runtime": {
+		"type": "node22",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../dist/main.js"
+	},
+	"legacyIds": [],
+	"manufacturer": "",
+	"products": ["MCU", "X-Touch"],
+	"usbIds": [],
+	"keywords": []
+}
