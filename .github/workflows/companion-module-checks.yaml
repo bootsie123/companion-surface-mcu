@@ -7,7 +7,7 @@ jobs:
   check:
     name: Check module
 
-    if: ${{ !contains(github.repository, 'companion-module-template-') }}
+    if: ${{ !contains(github.repository, 'companion-surface-template-') }}
 
     permissions:
       packages: read
