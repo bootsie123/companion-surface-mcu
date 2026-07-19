@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"type": "surface",
-	"id": "mcu-rtp-midi",
+	"id": "companion-surface-mcu",
 	"name": "Mackie Control RTP MIDI",
 	"shortname": "MCU RTP MIDI",
 	"description": "Discovers Mackie Control compatible surfaces over RTP MIDI",
