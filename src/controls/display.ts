@@ -233,8 +233,6 @@ export class ControlDisplay extends ControlBase {
 			}
 		}
 
-		console.log(color, closestColor)
-
 		return closestColor
 	}
 }

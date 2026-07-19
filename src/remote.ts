@@ -27,10 +27,7 @@ export class MCURemoteService
 	private readonly connectionRefCounts = new Map<string, number>()
 	private readonly connectionLayouts = new Map<string, string>()
 
-	private readonly connectionManager = rtpmidi.manager.createSession({
-		localName: 'Companion',
-		port: 5004,
-	})
+	private connectionManager: any
 
 	private autoReconnect: NodeJS.Timeout | undefined
 
@@ -68,6 +65,13 @@ export class MCURemoteService
 			choices: LayoutManager.getLayoutSelection(),
 			default: LayoutManager.defaultLayout.id,
 		})
+	}
+
+	async init(): Promise<void> {
+		this.connectionManager = rtpmidi.manager.createSession({
+			localName: 'Companion',
+			port: 5004,
+		})
 
 		this.connectionManager.on('ready', () => {
 			this.logger.info('Session ready')
@@ -84,9 +88,7 @@ export class MCURemoteService
 
 			this.emit('surfacesConnected', [info])
 		})
-	}
 
-	async init(): Promise<void> {
 		this.autoReconnect = setInterval(this.attemptAutoReconnect.bind(this), 10000)
 	}
 
