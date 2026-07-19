@@ -4,19 +4,16 @@ import {
 	type ModuleLogger,
 	type SurfaceContext,
 	type SurfaceDrawProps,
-	type SurfaceFirmwareUpdateCache,
 	type SurfaceFirmwareUpdateInfo,
 	type SurfaceInstance,
 } from '@companion-surface/base'
 import type { MCUDeviceInfo } from './main.js'
 import { DecodeStream, encode } from '@lachenmayer/midi-messages'
 import type { Transform } from 'node:stream'
-import type MidiMessage from './midi.js'
-import { LayoutXTouch } from './layouts/devices/xtouch.js'
+import type MidiMessage from './midi.d.ts'
 import type { Layout } from './layouts/base.js'
 import { ContextEventMap, ControlBase, type ControlMessenger, type MidiTrigger } from './controls/base.js'
 import type { ControlMessage } from 'rtpmidi'
-import { MCURemoteService } from './remote.js'
 import hash from 'object-hash'
 
 export class MCUInstance implements SurfaceInstance, ControlMessenger {
@@ -32,6 +29,8 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 
 	private readonly midiTriggerMap: Map<string, ControlBase> = new Map<string, ControlBase>()
 	private readonly variableMap: Map<string, ControlBase> = new Map<string, ControlBase>()
+
+	private initialized: boolean = false
 
 	private heartbeat: NodeJS.Timeout | undefined
 
@@ -73,23 +72,35 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 				this.variableMap.set(variable.id, control)
 			}
 		}
+
+		// Must wait for the connection to be established so initial updates from Companion
+		// are properly received
+		await this.waitForConnection()
 	}
 
 	async close(): Promise<void> {
 		this.stream.end()
 	}
 
+	async waitForConnection(): Promise<void> {
+		const poll = (resolv: any) => {
+			if (this.initialized) {
+				resolv()
+			} else {
+				setTimeout((_: any) => poll(resolv), 500)
+			}
+		}
+
+		return new Promise(poll)
+	}
+
 	async updateConfig(config: Record<string, any>): Promise<void> {
 		console.log('updateConfig', config)
-
-		// if (config.layout) {
-		// 	this.setControls(config.layout)
-		// }
 	}
 
 	async ready(): Promise<void> {}
 
-	async setBrightness(percent: number): Promise<void> {}
+	async setBrightness(): Promise<void> {}
 
 	async blank(): Promise<void> {
 		console.log('blank()')
@@ -105,7 +116,7 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 	}
 
-	onVariableValue(name: string, value: any): void {
+	onVariableValue(name: string, value: unknown): void {
 		const control = this.variableMap.get(name)
 
 		if (control) {
@@ -121,7 +132,7 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		console.log('showStatus', signal, cardGenerator, statusMessage)
 	}
 
-	async checkForFirmwareUpdates?(versionsCache: SurfaceFirmwareUpdateCache): Promise<SurfaceFirmwareUpdateInfo | null> {
+	async checkForFirmwareUpdates?(): Promise<SurfaceFirmwareUpdateInfo | null> {
 		return null
 	}
 
@@ -153,6 +164,10 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	private handleControlMessage(message: ControlMessage) {
 		if (message.command !== 'synchronization') return
 
+		if (!this.initialized) {
+			this.initialized = true
+		}
+
 		if (this.heartbeat) {
 			clearTimeout(this.heartbeat)
 		}
@@ -164,26 +179,25 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		this.context.disconnect(new Error('Surface failed heartbeat. Disconnecting'))
 	}
 
-	sendVariableValue(name: string, value: any): void {
+	sendVariableValue(name: string, value: unknown): void {
 		this.context.sendVariableValue(name, value)
 	}
 
-	sendMidi(message: MidiMessage | MidiMessage[]): void {
-		let commands: any = []
-
-		if (!Array.isArray(message)) {
-			commands.push({
-				deltaTime: 0,
-				data: encode(message)[0],
-			})
-		} else {
-			commands.concat(message.map((msg) => ({ deltaTime: 0, data: encode(msg)[0] })))
+	sendMidi(messages: MidiMessage | MidiMessage[]): void {
+		if (!Array.isArray(messages)) {
+			messages = [messages]
 		}
 
-		this.stream.sendMessage({
-			timestamp: 0,
-			commands,
-		})
+		for (const message of messages) {
+			this.stream.sendMessage({
+				timestamp: 0,
+				commands: [
+					{
+						data: encode(message)[0],
+					},
+				],
+			})
+		}
 	}
 
 	sendEvent(eventType: ContextEventMap, id: string): void {

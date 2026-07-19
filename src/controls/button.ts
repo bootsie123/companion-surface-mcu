@@ -5,7 +5,7 @@ import {
 	type SurfaceSchemaControlDefinition,
 } from '@companion-surface/base'
 import { ContextEventMap, ControlBase, MidiTriggerType, type ControlOptions, type MidiTrigger } from './base.js'
-import type MidiMessage from '../midi.js'
+import type MidiMessage from '../midi.d.ts'
 
 export interface MidiButtonTrigger extends MidiTrigger {
 	channel: number
@@ -33,10 +33,10 @@ export class ControlButton extends ControlBase {
 	}
 
 	onMidiMessage(message: MidiMessage): void {
-		super.sendEvent(message.velocity > 0 ? ContextEventMap.KeyDown : ContextEventMap.KeyUp)
+		this.sendEvent(message.velocity > 0 ? ContextEventMap.KeyDown : ContextEventMap.KeyUp)
 	}
 
-	draw(drawProps: SurfaceDrawProps) {
+	draw(drawProps: SurfaceDrawProps): void {
 		if (drawProps.leds && this.stylePreset.leds) {
 			let totalIntensity = 0
 
@@ -49,7 +49,7 @@ export class ControlButton extends ControlBase {
 	}
 
 	setLed(on: boolean): void {
-		super.sendMidi({
+		this.sendMidi({
 			type: MidiTriggerType.Button,
 			channel: this.midiTrigger.channel,
 			note: this.midiTrigger.note,

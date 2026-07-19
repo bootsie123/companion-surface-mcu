@@ -182,7 +182,7 @@ export class MCURemoteService
 
 		const existingStreams: any[] = this.connectionManager.getStreams()
 
-		for (const [connectionId, addressKey] of this.activeConnections.entries()) {
+		for (const addressKey of this.activeConnections.values()) {
 			const stream = existingStreams.find((stream) => addressKey === this.getAddressKeyFromStream(stream))
 
 			if (stream) {

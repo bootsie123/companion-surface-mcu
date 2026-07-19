@@ -1,7 +1,6 @@
 import type { DropdownChoice } from '@companion-surface/base'
 import type { Layout } from './base.js'
 import { LayoutXTouch } from './devices/xtouch.js'
-import type { ControlMessenger } from '../controls/base.js'
 
 export type ConcreteLayout = (new (...args: any) => Layout) & {
 	id: string
@@ -24,6 +23,6 @@ export class LayoutManager {
 	}
 
 	static layoutIdToType(id: string): ConcreteLayout {
-		return this.layouts.find((layout) => layout.id) || this.defaultLayout.type
+		return this.layouts.find((layout) => id === layout.id) || this.defaultLayout.type
 	}
 }

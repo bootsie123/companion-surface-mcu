@@ -1,10 +1,5 @@
-import type {
-	SurfaceInputVariable,
-	SurfaceOutputVariable,
-	SurfaceSchemaControlDefinition,
-	SurfaceSchemaLayoutDefinition,
-} from '@companion-surface/base'
-import type { ControlBase, ControlMessenger } from '../../controls/base.js'
+import type { SurfaceSchemaLayoutDefinition } from '@companion-surface/base'
+import type { ControlBase } from '../../controls/base.js'
 import { ControlButton } from '../../controls/button.js'
 import { ControlDisplay } from '../../controls/display.js'
 import { ControlEncoder } from '../../controls/encoder.js'
@@ -143,7 +138,9 @@ export class LayoutXTouch extends Layout {
 		for (let i = 0; i < 8; i++) {
 			controls.push(
 				new ControlDisplay({
-					midiTriggers: i.toString(),
+					channel: i + 1,
+					width: 7,
+					supportsBackground: true,
 					definition: {
 						row: 1,
 						column: i,

@@ -1,5 +1,5 @@
 import type { SurfaceInputVariable, SurfaceOutputVariable } from '@companion-surface/base'
-import { ControlBase, MidiTriggerType, type ControlOptions, type MidiTrigger } from './base.js'
+import { ControlBase, MidiTriggerType, type ControlOptions } from './base.js'
 
 export interface ControlMeterOptions extends ControlOptions {
 	channel: number
@@ -36,15 +36,19 @@ export class ControlMeter extends ControlBase {
 		]
 	}
 
-	onVariableChange(name: string, value: any): void {
+	onVariableChange(name: string, value: unknown): void {
+		if (typeof value !== 'number') {
+			value = parseInt(value?.toString() || (value as string))
+		}
+
 		if (name.includes('-in-percent')) {
-			this.setMeter(value, MeterMode.Percent)
+			this.setMeter(value as number, MeterMode.Percent)
 		} else if (name.includes('-in-db')) {
-			this.setMeter(value, MeterMode.DB)
+			this.setMeter(value as number, MeterMode.DB)
 		}
 	}
 
-	setMeter(value: number, mode: MeterMode) {
+	setMeter(value: number, mode: MeterMode): void {
 		let translated: number = 0
 
 		if (mode === MeterMode.Percent) {
@@ -91,7 +95,7 @@ export class ControlMeter extends ControlBase {
 
 		const val = parseInt(`0x${this.channel}${translated.toString(16)}`, 16)
 
-		super.sendMidi({
+		this.sendMidi({
 			type: MidiTriggerType.Meter,
 			channel: 1,
 			pressure: val,

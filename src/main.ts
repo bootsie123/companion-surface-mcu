@@ -7,8 +7,6 @@ import {
 } from '@companion-surface/base'
 import { MCURemoteService } from './remote.js'
 import { MCUInstance } from './instance.js'
-import { createConfigFields, generatePincodeMap } from './surface-schema.js'
-import type { Layout } from './layouts/base.js'
 import type { ConcreteLayout } from './layouts/manager.js'
 
 export interface MCUDeviceInfo {
@@ -39,6 +37,8 @@ export const plugin: SurfacePlugin<MCUDeviceInfo> = {
 		pluginInfo: MCUDeviceInfo,
 		context: SurfaceContext,
 	): Promise<OpenSurfaceResult> => {
+		logger.info(`Opening new surface: ${surfaceId} (${pluginInfo.ip}:${pluginInfo.port})`)
+
 		const surface = new MCUInstance(surfaceId, pluginInfo, context)
 
 		return {
@@ -46,9 +46,9 @@ export const plugin: SurfacePlugin<MCUDeviceInfo> = {
 			registerProps: {
 				brightness: false,
 				surfaceLayout: surface.layout.getLayoutDefinition(),
-				pincodeMap: generatePincodeMap(),
+				pincodeMap: null,
 				location: `${pluginInfo.ip}:${pluginInfo.port}`,
-				configFields: createConfigFields(),
+				configFields: [],
 				transferVariables: surface.layout.getTransferVariables(),
 			},
 		}

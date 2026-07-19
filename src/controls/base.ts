@@ -1,5 +1,4 @@
 import type {
-	SurfaceContext,
 	SurfaceDrawProps,
 	SurfaceInputVariable,
 	SurfaceOutputVariable,
@@ -7,7 +6,7 @@ import type {
 	SurfaceSchemaControlStylePreset,
 	SurfaceSchemaLayoutDefinition,
 } from '@companion-surface/base'
-import type MidiMessage from '../midi.js'
+import type MidiMessage from '../midi.d.ts'
 import hash from 'object-hash'
 import { nanoid } from 'nanoid'
 
@@ -24,6 +23,7 @@ export enum MidiTriggerType {
 	Button = 'NoteOn',
 	Encoder = 'ControlChange',
 	Meter = 'ChannelKeyPressure',
+	Display = 'SysEx',
 }
 
 export enum ContextEventMap {
@@ -113,9 +113,9 @@ export abstract class ControlBase {
 		return []
 	}
 
-	onMidiMessage(message: MidiMessage): void {}
+	onMidiMessage(_message: MidiMessage): void {}
 
-	onVariableChange(name: string, value: any): void {}
+	onVariableChange(_name: string, _value: unknown): void {}
 
 	sendMidi(message: MidiMessage | MidiMessage[]): void {
 		this.options.messenger.sendMidi(message)
@@ -125,9 +125,9 @@ export abstract class ControlBase {
 		this.options.messenger.sendEvent(eventType, this.id)
 	}
 
-	sendVariableValue(name: string, value: any): void {
+	sendVariableValue(name: string, value: unknown): void {
 		this.options.messenger.sendVariableValue(name, value)
 	}
 
-	draw(drawProps: SurfaceDrawProps): void {}
+	draw(_drawProps: SurfaceDrawProps): void {}
 }

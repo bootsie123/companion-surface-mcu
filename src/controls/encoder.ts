@@ -8,7 +8,7 @@ import {
 } from '@companion-surface/base'
 import { ContextEventMap, ControlBase, MidiTriggerType, type ControlOptions, type MidiTrigger } from './base.js'
 import type { MidiButtonTrigger } from './button.js'
-import type MidiMessage from '../midi.js'
+import type MidiMessage from '../midi.d.ts'
 import { BitSet } from 'bitset'
 
 export interface MidiEncoderTrigger extends MidiTrigger {
@@ -79,7 +79,7 @@ export class ControlEncoder extends ControlBase {
 
 		return [
 			{
-				id: `${super.id}-led`,
+				id: `${this.id}-led`,
 				name: `${this.name ? this.name : '?'} Encoder LED`,
 				description: 'Input to set the lower LEDs on the encoder on or off',
 				type: 'output',
@@ -87,7 +87,7 @@ export class ControlEncoder extends ControlBase {
 		]
 	}
 
-	onVariableChange(name: string, value: any): void {
+	onVariableChange(name: string, value: unknown): void {
 		if (name.includes('-led')) {
 			this.useLowerLed = value != 0
 
@@ -107,20 +107,20 @@ export class ControlEncoder extends ControlBase {
 	onMidiMessage(message: MidiMessage): void {
 		switch (message.type) {
 			case MidiTriggerType.Encoder: {
-				super.sendEvent(message.value > 32 ? ContextEventMap.RotateLeft : ContextEventMap.RotateRight)
+				this.sendEvent(message.value > 32 ? ContextEventMap.RotateLeft : ContextEventMap.RotateRight)
 
 				break
 			}
 
 			case MidiTriggerType.Button: {
-				super.sendEvent(message.velocity > 0 ? ContextEventMap.KeyDown : ContextEventMap.KeyUp)
+				this.sendEvent(message.velocity > 0 ? ContextEventMap.KeyDown : ContextEventMap.KeyUp)
 
 				break
 			}
 		}
 	}
 
-	draw(drawProps: SurfaceDrawProps) {
+	draw(drawProps: SurfaceDrawProps): void {
 		this.lastDrawProps = drawProps
 
 		if (drawProps.leds && this.stylePreset.leds && this.ledControl) {
@@ -193,13 +193,13 @@ export class ControlEncoder extends ControlBase {
 		const allFalse = segments.every((val) => val === false)
 
 		if (allFalse) {
-			return super.sendMidi(message)
+			return this.sendMidi(message)
 		}
 
 		const { mode, value } = this.ledRingMatch(segments)
 
 		message.value |= mode | value
 
-		super.sendMidi(message)
+		this.sendMidi(message)
 	}
 }
