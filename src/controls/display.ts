@@ -9,19 +9,26 @@ const EMPTY = 0x10
 const NUMBER_DISPLAYS = 8
 const MANUFACTURER_ID = [0x00, 0x00, 0x66]
 
+/**
+ * Options required to create a display control.
+ */
 export interface ControlDisplayOptions extends ControlOptions {
-	channel: number
-	width: number
-	deviceId?: number
-	supportsBackground?: boolean
-	definition: SurfaceSchemaControlDefinition
+	channel: number // The channel/channel strip number associated with the display (indexed from 0)
+	width: number // The width of the display in characters
+	deviceId?: number // The device ID for the display (default: 0x14)
+	supportsBackground?: boolean // Whether the display supports background color changes (default: false)
+	definition: SurfaceSchemaControlDefinition // The control definition for the display
 }
 
+/**
+ * Defines a background color supported by the display.
+ */
 export interface DisplayColor {
-	id: number
-	color: tinycolor.Instance
+	id: number // The ID of the color as defined by the device
+	color: tinycolor.Instance // The color value as a tinycolor instance
 }
 
+// Supported background colors (X-Touch specific)
 export const displayColors: DisplayColor[] = [
 	{
 		id: 0, // Off
@@ -85,6 +92,9 @@ export const displayColors: DisplayColor[] = [
 	},
 ]
 
+/**
+ * Control implementation for a character/text display.
+ */
 export class ControlDisplay extends ControlBase {
 	private readonly deviceId: number = 0x14
 	private readonly supportsBackground: boolean = false
@@ -96,6 +106,11 @@ export class ControlDisplay extends ControlBase {
 
 	private static readonly displays: Map<number, ControlDisplay> = new Map<number, ControlDisplay>()
 
+	/**
+	 * Initializes the control with the supplied options.
+	 *
+	 * @param options The configuration options for the control
+	 */
 	constructor(options: ControlDisplayOptions) {
 		if (!options.definition.stylePreset) {
 			options.definition.stylePreset = 'display'
@@ -117,6 +132,11 @@ export class ControlDisplay extends ControlBase {
 		}
 	}
 
+	/**
+	 * Draws the new text or background onto the display.
+	 *
+	 * @params drawProps The properties from Companion used to draw the control
+	 */
 	draw(drawProps: SurfaceDrawProps): void {
 		if (drawProps.color && this.supportsBackground) {
 			this.drawBackground(drawProps.color)
@@ -127,11 +147,17 @@ export class ControlDisplay extends ControlBase {
 		}
 	}
 
+	/**
+	 * Renders text across the configured display. Text is truncated to the display
+	 * width and overflows to the bottom row.
+	 *
+	 * @param text The text to render on the display
+	 */
 	drawText(text: string): void {
 		text = text.substring(0, this.width * 2)
 
-		const startTop = (this.channel - 1) * this.width
-		const startBottom = this.width * NUMBER_DISPLAYS + (this.channel - 1) * this.width
+		const startTop = this.channel * this.width
+		const startBottom = this.width * NUMBER_DISPLAYS + this.channel * this.width
 
 		const top: number[] = []
 		const bottom: number[] = []
@@ -171,6 +197,14 @@ export class ControlDisplay extends ControlBase {
 		}
 	}
 
+	/**
+	 * Updates the background color for the display.
+	 *
+	 * This causes the background of all other displays to rerender due to
+	 * the MIDI command arguments requiring all displays to be updated at once.
+	 *
+	 * @param color The requested background color to render
+	 */
 	drawBackground(color: string): void {
 		this.backgroundColor = this.calcBackgroundColor(tinycolor(color).toRgb())
 
@@ -188,6 +222,13 @@ export class ControlDisplay extends ControlBase {
 		})
 	}
 
+	/**
+	 * Forwards MIDI messages to the surface.
+	 *
+	 * Ensures SysEx messages are auto wrapped with the manufacturer and device IDs.
+	 *
+	 * @param messages The MIDI message or array of messages to send
+	 */
 	sendMidi(messages: MidiMessage | MidiMessage[]): void {
 		if (!Array.isArray(messages)) {
 			messages = [messages]
@@ -204,6 +245,14 @@ export class ControlDisplay extends ControlBase {
 		super.sendMidi(messages)
 	}
 
+	/**
+	 * Calculates the Euclidean color distance between two RGBA colors.
+	 *
+	 * @param color1 The first RGBA color to compare
+	 * @param color2 The second RGBA color to compare
+	 *
+	 * @returns The distance between the two colors
+	 */
 	private calcColorDistance(color1: tinycolor.ColorFormats.RGBA, color2: tinycolor.ColorFormats.RGBA): number {
 		const r = color1.r - color2.r
 		const g = color1.g - color2.g
@@ -212,6 +261,13 @@ export class ControlDisplay extends ControlBase {
 		return Math.sqrt(r * r + g * g + b * b)
 	}
 
+	/**
+	 * Determines the closest supported display color for a requested background.
+	 *
+	 * @param color The requested display color
+	 *
+	 * @returns The closest supported display color
+	 */
 	private calcBackgroundColor(color: tinycolor.ColorFormats.RGBA): DisplayColor {
 		if ((color.r === 0 && color.g === 0 && color.b === 0) || color.a === 0) {
 			return {

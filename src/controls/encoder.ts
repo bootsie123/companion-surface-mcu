@@ -11,19 +11,28 @@ import type { MidiButtonTrigger } from './button.js'
 import type MidiMessage from '../midi.d.ts'
 import { BitSet } from 'bitset'
 
+/**
+ * MIDI trigger settings for the encoder control.
+ */
 export interface MidiEncoderTrigger extends MidiTrigger {
-	channel: number
-	control: number
+	channel: number // The MIDI channel number of the encoder
+	control: number // The MIDI control number of the encoder
 }
 
+/**
+ * Options required to create the encoder control.
+ */
 export interface ControlEncoderOptions extends Omit<ControlOptions, 'midiTriggers'> {
-	midiEncoderTrigger: MidiEncoderTrigger
-	midiButtonTrigger?: MidiButtonTrigger
-	ledControl?: number
-	name?: string
-	definition: SurfaceSchemaControlDefinition
+	midiEncoderTrigger: MidiEncoderTrigger // The MIDI trigger settings for the encoder
+	midiButtonTrigger?: MidiButtonTrigger // Optional MIDI trigger settings for the encoder's push button
+	ledControl?: number // Optional MIDI control number for the encoder's LED ring
+	name?: string // Optional name for the encoder, used for transfer variable names
+	definition: SurfaceSchemaControlDefinition // The control definition for the encoder
 }
 
+/**
+ * Maps supported LED ring modes to their hex value.
+ */
 enum LedRing {
 	EncoderLed = 0x40,
 	SingleMode = 0x0,
@@ -32,6 +41,9 @@ enum LedRing {
 	CenteredMode = 0x30,
 }
 
+/**
+ * Control implementation for a physical encoder on the surface.
+ */
 export class ControlEncoder extends ControlBase {
 	private readonly midiEncoderTrigger: MidiEncoderTrigger
 
@@ -43,6 +55,7 @@ export class ControlEncoder extends ControlBase {
 
 	private lastDrawProps: SurfaceDrawProps | undefined
 
+	// For each mode, maps the LED number of the LED ring (determined by the index) to its corresponding bit pattern
 	private static readonly ledRingBitPatterns = {
 		[LedRing.SingleMode]: [0x0, 0x400, 0x200, 0x100, 0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1],
 		[LedRing.OffSetMode]: [0x0, 0x7e0, 0x3e0, 0x1e0, 0xe0, 0x60, 0x20, 0x30, 0x38, 0x3c, 0x3e, 0x3f],
@@ -50,6 +63,11 @@ export class ControlEncoder extends ControlBase {
 		[LedRing.CenteredMode]: [0x0, 0x20, 0x70, 0xf8, 0x1fc, 0x3fe, 0x7ff, 0x7ff, 0x7ff, 0x7ff, 0x7ff, 0x7ff],
 	}
 
+	/**
+	 * Initializes the control with the supplied options.
+	 *
+	 * @param options The configuration options for the control
+	 */
 	constructor(options: ControlEncoderOptions) {
 		const controlOptions: any = options
 
@@ -74,6 +92,11 @@ export class ControlEncoder extends ControlBase {
 		this.ledControl = options.ledControl
 	}
 
+	/**
+	 * Returns the encoder's input/output transfer variables to be exposed in Companion.
+	 *
+	 * @returns The encoder's transfer variables
+	 */
 	getTransferVariables(): (SurfaceInputVariable | SurfaceOutputVariable)[] {
 		if (!this.ledControl) return []
 
@@ -87,6 +110,12 @@ export class ControlEncoder extends ControlBase {
 		]
 	}
 
+	/**
+	 * Updates the encoder's LEDs from a Companion variable change.
+	 *
+	 * @param name The name of the variable that changed
+	 * @param value The new value of the variable
+	 */
 	onVariableChange(name: string, value: unknown): void {
 		if (name.includes('-led')) {
 			this.useLowerLed = value != 0
@@ -104,6 +133,11 @@ export class ControlEncoder extends ControlBase {
 		}
 	}
 
+	/**
+	 * Handles incoming encoder and optional button MIDI messages.
+	 *
+	 * @param message The incoming MIDI message to handle
+	 */
 	onMidiMessage(message: MidiMessage): void {
 		switch (message.type) {
 			case MidiTriggerType.Encoder: {
@@ -120,6 +154,11 @@ export class ControlEncoder extends ControlBase {
 		}
 	}
 
+	/**
+	 * Renders the encoder LED segments according to the draw properties given from Companion.
+	 *
+	 * @param drawProps The properties from Companion used to draw the control
+	 */
 	draw(drawProps: SurfaceDrawProps): void {
 		this.lastDrawProps = drawProps
 
@@ -136,6 +175,13 @@ export class ControlEncoder extends ControlBase {
 		}
 	}
 
+	/**
+	 * Reduce the LED segments from Companion down to the device's 11-position ring.
+	 *
+	 * @param segments A boolean array (on or off) of LED segments
+	 *
+	 * @returns A reduced boolean array of LED segments
+	 */
 	private reduceSegments(segments: boolean[]): boolean[] {
 		const targetLength = 11
 
@@ -154,6 +200,13 @@ export class ControlEncoder extends ControlBase {
 		})
 	}
 
+	/**
+	 * Matches a reduced LED segment array to the nearest supported LED ring mode.
+	 *
+	 * @param segments A boolean array of LED segments
+	 *
+	 * @returns The closest supported LED ring mode
+	 */
 	private ledRingMatch(segments: boolean[]): { mode: LedRing; value: number } {
 		const segmentMask = new BitSet(segments.map((val) => (val ? '1' : '0')).join(''))
 
@@ -182,6 +235,11 @@ export class ControlEncoder extends ControlBase {
 		}
 	}
 
+	/**
+	 * Updates the encoder's LED ring.
+	 *
+	 * @param segments A boolean array of LED segments
+	 */
 	setLedRing(segments: boolean[]): void {
 		const message = {
 			type: MidiTriggerType.Encoder,

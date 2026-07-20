@@ -1,24 +1,42 @@
 import type { SurfaceInputVariable, SurfaceOutputVariable } from '@companion-surface/base'
 import { ControlBase, MidiTriggerType, type ControlOptions } from './base.js'
-
+/**
+ * Options required to create the meter control.
+ */
 export interface ControlMeterOptions extends ControlOptions {
-	channel: number
+	channel: number // The channel/channel strip number associated with the meter (indexed from 0)
 }
 
+/**
+ * Modes supported when setting the meter value.
+ */
 export enum MeterMode {
-	Percent = 'percent',
-	DB = 'db',
+	Percent = 'percent', // 0-100 range
+	DB = 'db', // Value in decibels
 }
 
+/**
+ * Control implementation for an LED-style meter.
+ */
 export class ControlMeter extends ControlBase {
 	private readonly channel: number
 
+	/**
+	 * Initializes the control with the supplied options.
+	 *
+	 * @param options The configuration options for the control
+	 */
 	constructor(options: ControlMeterOptions) {
 		super(options)
 
 		this.channel = options.channel
 	}
 
+	/**
+	 * Returns the meter's input transfer variables to be exposed in Companion.
+	 *
+	 * @returns The meter's transfer variables
+	 */
 	getTransferVariables(): (SurfaceInputVariable | SurfaceOutputVariable)[] {
 		return [
 			{
@@ -36,6 +54,12 @@ export class ControlMeter extends ControlBase {
 		]
 	}
 
+	/**
+	 * Updates the meter's LEDs from a Companion variable change.
+	 *
+	 * @param name The name of the variable that changed
+	 * @param value The new value of the variable
+	 */
 	onVariableChange(name: string, value: unknown): void {
 		if (typeof value !== 'number') {
 			value = parseInt(value?.toString() || (value as string))
@@ -48,6 +72,12 @@ export class ControlMeter extends ControlBase {
 		}
 	}
 
+	/**
+	 * Sets the meter's value based on a given mode.Convert an input value into the device-specific meter encoding and send it.
+	 *
+	 * @param value The new meter value
+	 * @param mode The mode to use: percent or dB
+	 */
 	setMeter(value: number, mode: MeterMode): void {
 		let translated: number = 0
 
