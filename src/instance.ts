@@ -189,6 +189,10 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 
 		for (const message of messages) {
+			if (message.channel) {
+				message.channel = message.channel + 1 // Convert to 1-indexed channel for the RTP MIDI library
+			}
+
 			this.stream.sendMessage({
 				timestamp: 0,
 				commands: [

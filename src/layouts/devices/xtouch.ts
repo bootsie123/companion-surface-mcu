@@ -68,11 +68,11 @@ export class LayoutXTouch extends Layout {
 			controls.push(
 				new ControlEncoder({
 					midiEncoderTrigger: {
-						channel: 1,
+						channel: 0,
 						control: 16 + i,
 					},
 					midiButtonTrigger: {
-						channel: 1,
+						channel: 0,
 						note: 32 + i,
 					},
 					definition: {
@@ -90,7 +90,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlEncoder({
 				midiEncoderTrigger: {
-					channel: 1,
+					channel: 0,
 					control: 60,
 				},
 				definition: {
@@ -111,13 +111,13 @@ export class LayoutXTouch extends Layout {
 			controls.push(
 				new ControlFader({
 					midiTriggers: {
-						channel: i + 1,
+						channel: i,
 					},
 					...this.commonControlOptions,
 				}),
 				new ControlButton({
 					midiTriggers: {
-						channel: 1,
+						channel: 0,
 						note: 104 + i,
 					},
 					definition: {
@@ -138,7 +138,7 @@ export class LayoutXTouch extends Layout {
 		for (let i = 0; i < 8; i++) {
 			controls.push(
 				new ControlDisplay({
-					channel: i + 1,
+					channel: i,
 					width: 7,
 					supportsBackground: true,
 					definition: {
@@ -159,7 +159,7 @@ export class LayoutXTouch extends Layout {
 		for (let i = 0; i < 8; i++) {
 			controls.push(
 				new ControlMeter({
-					channel: i + 1,
+					channel: i,
 					...this.commonControlOptions,
 				}),
 			)
@@ -175,7 +175,7 @@ export class LayoutXTouch extends Layout {
 			const create = (noteOffset: number, row: number) => {
 				return new ControlButton({
 					midiTriggers: {
-						channel: 1,
+						channel: 0,
 						note: noteOffset + i,
 					},
 					definition: {
@@ -198,7 +198,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 51,
 				},
 				definition: {
@@ -213,7 +213,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 50,
 				},
 				definition: {
@@ -239,7 +239,7 @@ export class LayoutXTouch extends Layout {
 				controls.push(
 					new ControlButton({
 						midiTriggers: {
-							channel: 1,
+							channel: 0,
 							note: noteOffset ? noteOffset + i : number[i],
 						},
 						definition: {
@@ -271,7 +271,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 96,
 				},
 				definition: {
@@ -286,7 +286,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 97,
 				},
 				definition: {
@@ -301,7 +301,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 52,
 				},
 				definition: {
@@ -316,7 +316,7 @@ export class LayoutXTouch extends Layout {
 		controls.push(
 			new ControlButton({
 				midiTriggers: {
-					channel: 1,
+					channel: 0,
 					note: 53,
 				},
 				definition: {
