@@ -6,6 +6,7 @@ import { ControlEncoder } from '../../controls/encoder.js'
 import { ControlFader } from '../../controls/fader.js'
 import { Layout } from '../base.js'
 import { ControlMeter } from '../../controls/meter.js'
+import { ControlSegmentDisplay } from '../../controls/segment-display.js'
 
 const stylePresets: SurfaceSchemaLayoutDefinition['stylePresets'] = {
 	default: {},
@@ -24,6 +25,9 @@ const stylePresets: SurfaceSchemaLayoutDefinition['stylePresets'] = {
 	display: {
 		text: true,
 		colors: 'rgb',
+	},
+	segmentDisplay: {
+		text: true,
 	},
 }
 
@@ -54,6 +58,7 @@ export class LayoutXTouch extends Layout {
 			this.createFaders(),
 			this.createDisplays(),
 			this.createMeters(),
+			this.createSegmentDisplays(),
 		)
 	}
 
@@ -144,6 +149,33 @@ export class LayoutXTouch extends Layout {
 					definition: {
 						row: 1,
 						column: i,
+					},
+					...this.commonControlOptions,
+				}),
+			)
+		}
+
+		return controls
+	}
+
+	createSegmentDisplays(): ControlSegmentDisplay[] {
+		const controls: ControlSegmentDisplay[] = []
+
+		for (const [i, [control, width]] of [
+			[75, -2],
+			[73, -3],
+			[70, -2],
+			[68, -2],
+			[66, -3],
+		].entries()) {
+			controls.push(
+				new ControlSegmentDisplay({
+					channel: 1,
+					control,
+					width,
+					definition: {
+						row: 1,
+						column: 9 + i,
 					},
 					...this.commonControlOptions,
 				}),
@@ -321,7 +353,7 @@ export class LayoutXTouch extends Layout {
 				},
 				definition: {
 					row: 1,
-					column: 16,
+					column: 14,
 				},
 				...this.commonControlOptions,
 			}),

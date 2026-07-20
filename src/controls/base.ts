@@ -15,7 +15,7 @@ import { nanoid } from 'nanoid'
  */
 export interface MidiTrigger {
 	type?: MidiTriggerType // The type of MIDI message (e.g., NoteOn, ControlChange, PitchBendChange, SysEx)
-	channel?: number // The MIDI channel number for the trigger (if applicable)
+	channel?: number // The MIDI channel number (indexed from 1) for the trigger (if applicable)
 	note?: number // The MIDI note number for the trigger (if applicable)
 	control?: number // The MIDI control number for the trigger (if applicable)
 	number?: number // The MIDI number for the trigger (if applicable)
@@ -30,6 +30,7 @@ export enum MidiTriggerType {
 	Encoder = 'ControlChange',
 	Meter = 'ChannelKeyPressure',
 	Display = 'SysEx',
+	SegmentDisplay = 'ControlChange',
 }
 
 /**
