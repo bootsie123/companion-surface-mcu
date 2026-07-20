@@ -201,8 +201,20 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	}
 
 	sendEvent(eventType: ContextEventMap, id: string): void {
-		if (this.context[eventType]) {
-			this.context[eventType](id)
+		try {
+			if (this.context[eventType]) {
+				this.context[eventType](id)
+			}
+		} catch (err) {
+			if (err instanceof Error) {
+				if (err.message.includes('Surface not set')) {
+					return this.logger.warn(`Attempted to send event ${eventType} for control ${id} before surface was set`)
+				}
+
+				this.logger.error(`Error occurred while sending event: ${err.message}`)
+			} else {
+				this.logger.error(`Unknown error occurred while sending event: ${err}`)
+			}
 		}
 	}
 }
