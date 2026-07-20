@@ -156,8 +156,8 @@ export class ControlDisplay extends ControlBase {
 	drawText(text: string): void {
 		text = text.substring(0, this.width * 2)
 
-		const startTop = this.channel * this.width
-		const startBottom = this.width * NUMBER_DISPLAYS + this.channel * this.width
+		const startTop = (this.channel - 1) * this.width
+		const startBottom = this.width * NUMBER_DISPLAYS + (this.channel - 1) * this.width
 
 		const top: number[] = []
 		const bottom: number[] = []
