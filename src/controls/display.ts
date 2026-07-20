@@ -13,7 +13,7 @@ const MANUFACTURER_ID = [0x00, 0x00, 0x66]
  * Options required to create a display control.
  */
 export interface ControlDisplayOptions extends ControlOptions {
-	channel: number // The channel/channel strip number associated with the display (indexed from 0)
+	channel: number // The channel/channel strip number associated with the display (indexed from 1)
 	width: number // The width of the display in characters
 	deviceId?: number // The device ID for the display (default: 0x14)
 	supportsBackground?: boolean // Whether the display supports background color changes (default: false)
@@ -142,7 +142,7 @@ export class ControlDisplay extends ControlBase {
 			this.drawBackground(drawProps.color)
 		}
 
-		if (drawProps.text) {
+		if (drawProps.text || drawProps.text === '') {
 			this.drawText(drawProps.text)
 		}
 	}

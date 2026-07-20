@@ -15,7 +15,7 @@ import { BitSet } from 'bitset'
  * MIDI trigger settings for the encoder control.
  */
 export interface MidiEncoderTrigger extends MidiTrigger {
-	channel: number // The MIDI channel number of the encoder
+	channel: number // The MIDI channel number of the encoder (indexed from 1)
 	control: number // The MIDI control number of the encoder
 }
 

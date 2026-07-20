@@ -11,7 +11,7 @@ import type MidiMessage from '../midi.d.ts'
  * MIDI trigger settings for the button control.
  */
 export interface MidiButtonTrigger extends MidiTrigger {
-	channel: number // The MIDI channel number of the button
+	channel: number // The MIDI channel number of the button (indexed from 1)
 	note: number // The MIDI note number of the button
 }
 

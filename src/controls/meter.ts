@@ -4,7 +4,7 @@ import { ControlBase, MidiTriggerType, type ControlOptions } from './base.js'
  * Options required to create the meter control.
  */
 export interface ControlMeterOptions extends ControlOptions {
-	channel: number // The channel/channel strip number associated with the meter (indexed from 0)
+	channel: number // The channel/channel strip number associated with the meter (indexed from 1)
 }
 
 /**

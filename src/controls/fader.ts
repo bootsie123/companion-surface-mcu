@@ -6,7 +6,7 @@ import type MidiMessage from '../midi.d.ts'
  * MIDI trigger settings for the fader control.
  */
 export interface MidiFaderTrigger extends MidiTrigger {
-	channel: number // The MIDI channel number of the fader
+	channel: number // The MIDI channel number of the fader (indexed from 1)
 }
 
 /**
