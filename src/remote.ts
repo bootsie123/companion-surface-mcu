@@ -106,9 +106,7 @@ export class MCURemoteService
 
 			const newAddressKey = `${config.address}:${config.port}`
 
-			if (!this.connectionLayouts.has(newAddressKey)) {
-				this.connectionLayouts.set(newAddressKey, config.layout || LayoutManager.defaultLayout.id)
-			}
+			this.connectionLayouts.set(newAddressKey, config.layout || LayoutManager.defaultLayout.id)
 
 			const oldAddressKey = this.activeConnections.get(info.connectionId)
 
