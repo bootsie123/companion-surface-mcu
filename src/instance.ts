@@ -16,6 +16,8 @@ import { ContextEventMap, ControlBase, type ControlMessenger, type MidiTrigger }
 import type { ControlMessage } from 'rtpmidi'
 import hash from 'object-hash'
 
+const delay = async (ms: number) => new Promise((resolve: any) => setTimeout(() => resolve(), ms))
+
 export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	private readonly logger: ModuleLogger
 	private readonly context: SurfaceContext
@@ -94,20 +96,23 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		return new Promise(poll)
 	}
 
-	async updateConfig(config: Record<string, any>): Promise<void> {
-		console.log('updateConfig', config)
+	async updateConfig(_config: Record<string, any>): Promise<void> {}
+
+	async ready(): Promise<void> {
+		this.logger.info('Surface ready!')
 	}
 
-	async ready(): Promise<void> {}
-
-	async setBrightness(): Promise<void> {}
+	async setBrightness(_percent: number): Promise<void> {}
 
 	async blank(): Promise<void> {
-		console.log('blank()')
+		for (const control of this.layout.controls) {
+			await control.blank()
+			await delay(1) // Prevents overwhelming the surface with MIDI commands
+		}
 	}
 
 	async draw(signal: AbortSignal, drawProps: SurfaceDrawProps): Promise<void> {
-		if (signal.aborted) return
+		if (signal.aborted || this.context.isLocked) return
 
 		const control = this.layout.getControlById(drawProps.controlId)
 
@@ -119,18 +124,12 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	onVariableValue(name: string, value: unknown): void {
 		const control = this.variableMap.get(name)
 
-		if (control) {
+		if (control && !this.context.isLocked) {
 			control.onVariableChange(name, value)
 		}
 	}
 
-	showLockedStatus?(locked: boolean, characterCount: number): void {
-		console.log('showLockedStatus', locked, characterCount)
-	}
-
-	async showStatus(signal: AbortSignal, cardGenerator: CardGenerator, statusMessage: string): Promise<void> {
-		console.log('showStatus', signal, cardGenerator, statusMessage)
-	}
+	async showStatus(_signal: AbortSignal, _cardGenerator: CardGenerator, _statusMessage: string): Promise<void> {}
 
 	async checkForFirmwareUpdates?(): Promise<SurfaceFirmwareUpdateInfo | null> {
 		return null

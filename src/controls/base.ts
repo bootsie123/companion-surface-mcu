@@ -217,4 +217,9 @@ export abstract class ControlBase {
 	 * @param drawProps The properties from Companion used to draw the control
 	 */
 	draw(_drawProps: SurfaceDrawProps): void {}
+
+	/**
+	 * Blank the control clearing any visual state.
+	 */
+	async blank(): Promise<void> {}
 }

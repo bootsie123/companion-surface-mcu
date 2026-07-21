@@ -1,6 +1,7 @@
 import type {
 	SurfaceInputVariable,
 	SurfaceOutputVariable,
+	SurfacePincodeMap,
 	SurfaceSchemaControlDefinition,
 	SurfaceSchemaLayoutDefinition,
 } from '@companion-surface/base'
@@ -57,6 +58,10 @@ export abstract class Layout {
 		)
 
 		return definitions
+	}
+
+	getPincodeMap(): SurfacePincodeMap | null {
+		return null
 	}
 
 	abstract getLayoutDefinition(): SurfaceSchemaLayoutDefinition

@@ -131,4 +131,9 @@ export class ControlMeter extends ControlBase {
 			pressure: val,
 		})
 	}
+
+	/**
+	 * Blanks the meter clearing any visual state.
+	 */
+	async blank(): Promise<void> {}
 }

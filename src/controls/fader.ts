@@ -173,4 +173,11 @@ export class ControlFader extends ControlBase {
 			(1 + 6.29e-6 * x + 3.46e-8 * x * x - 1.15e-12 * x * x * x)
 		)
 	}
+
+	/**
+	 * Blanks the fader clearing any visual state.
+	 */
+	async blank(): Promise<void> {
+		this.sendMidiMode(0, FaderMode.Percent)
+	}
 }

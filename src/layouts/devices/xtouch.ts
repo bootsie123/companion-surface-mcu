@@ -1,4 +1,4 @@
-import type { SurfaceSchemaLayoutDefinition } from '@companion-surface/base'
+import type { SurfacePincodeMap, SurfaceSchemaLayoutDefinition } from '@companion-surface/base'
 import type { ControlBase } from '../../controls/base.js'
 import { ControlButton } from '../../controls/button.js'
 import { ControlDisplay } from '../../controls/display.js'
@@ -32,10 +32,10 @@ const stylePresets: SurfaceSchemaLayoutDefinition['stylePresets'] = {
 }
 
 export class LayoutXTouch extends Layout {
-	private commonControlOptions: any = {}
+	protected commonControlOptions: any = {}
 
-	static readonly id = 'xtouch'
-	static readonly label = 'X-Touch'
+	static id = 'xtouch'
+	static label = 'X-Touch'
 
 	getLayoutDefinition(): SurfaceSchemaLayoutDefinition {
 		const surfaceLayout: SurfaceSchemaLayoutDefinition = {
@@ -44,6 +44,41 @@ export class LayoutXTouch extends Layout {
 		}
 
 		return surfaceLayout
+	}
+
+	getPincodeMap(): SurfacePincodeMap | null {
+		const pincodeMap: any = {
+			type: 'single-page',
+			pincode: null,
+		}
+
+		const gridMap: { [k: string]: any } = {
+			'2/8': 0, // Global View
+			'3/9': 1, // F1
+			'3/10': 2, // F2
+			'3/11': 3, // F3
+			'3/12': 4, // F4
+			'3/13': 5, // F5
+			'3/14': 6, // F6
+			'3/15': 7, // F7
+			'3/16': 8, // F8
+			'5/8': 9, // Flip
+		}
+
+		for (const control of this.layoutControls) {
+			const definition = control.getControlDefinition()
+
+			if (definition) {
+				const gridPosition = `${definition.row}/${definition.column}`
+				const number = gridMap[gridPosition]
+
+				if (number) {
+					pincodeMap[number] = control.id
+				}
+			}
+		}
+
+		return pincodeMap
 	}
 
 	createLayout(): ControlBase[] {

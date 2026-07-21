@@ -192,8 +192,12 @@ export class ControlDisplay extends ControlBase {
 			},
 		])
 
-		if (tinycolor.equals(this.backgroundColor.color, displayColors[0].color)) {
+		const blackBackground = tinycolor.equals(this.backgroundColor.color, displayColors[0].color)
+
+		if (text.length > 0 && blackBackground) {
 			this.drawBackground('#fff')
+		} else if (text.length === 0 && !blackBackground) {
+			this.drawBackground('#000')
 		}
 	}
 
@@ -290,5 +294,13 @@ export class ControlDisplay extends ControlBase {
 		}
 
 		return closestColor
+	}
+
+	/**
+	 * Blanks the display clearing any text and setting the background to black.
+	 */
+	async blank(): Promise<void> {
+		this.drawText('')
+		this.drawBackground('#000')
 	}
 }

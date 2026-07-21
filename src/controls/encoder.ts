@@ -260,4 +260,20 @@ export class ControlEncoder extends ControlBase {
 
 		this.sendMidi(message)
 	}
+
+	/**
+	 * Blanks the encoder clearing any visual state
+	 */
+	async blank(): Promise<void> {
+		if (this.ledControl) {
+			this.useLowerLed = false
+
+			this.sendMidi({
+				type: MidiTriggerType.Encoder,
+				channel: this.midiEncoderTrigger.channel,
+				control: this.ledControl,
+				value: 0x0,
+			})
+		}
+	}
 }

@@ -85,4 +85,11 @@ export class ControlButton extends ControlBase {
 			velocity: on ? 127 : 0,
 		})
 	}
+
+	/**
+	 * Blanks the button control turning off its LED.
+	 */
+	async blank(): Promise<void> {
+		this.setLed(false)
+	}
 }
