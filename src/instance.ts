@@ -18,6 +18,9 @@ import hash from 'object-hash'
 
 const delay = async (ms: number) => new Promise((resolve: any) => setTimeout(() => resolve(), ms))
 
+/**
+ * Implements a Companion surface instance for an MCU-compatible device.
+ */
 export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	private readonly logger: ModuleLogger
 	private readonly context: SurfaceContext
@@ -39,6 +42,13 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	readonly surfaceId: string
 	readonly productName: string
 
+	/**
+	 * Creates a new MCU surface instance.
+	 *
+	 * @param surfaceId The surface id
+	 * @param config The device config and connection details
+	 * @param context The Companion surface context
+	 */
 	constructor(surfaceId: string, config: MCUDeviceInfo, context: SurfaceContext) {
 		this.logger = createModuleLogger(`Instance/${surfaceId}`)
 
@@ -60,10 +70,20 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		;(this.decode as unknown as Transform).on('data', this.handleMidi.bind(this))
 	}
 
+	/**
+	 * Exposes the layout instance for the surface.
+	 *
+	 * @returns The layout instance
+	 */
 	get layout(): Layout {
 		return this._layout
 	}
 
+	/**
+	 * Initializes control mappings and waits for the RTP MIDI connection to initialize
+	 *
+	 * @returns A promise that resolves when the instance is ready
+	 */
 	async init(): Promise<void> {
 		for (const control of this.layout.controls) {
 			for (const midiTrigger of control.midiTriggers) {
@@ -80,10 +100,20 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		await this.waitForConnection()
 	}
 
+	/**
+	 * Closes the underlying RTP MIDI stream.
+	 *
+	 * @returns A promise that resolves when the stream has been closed
+	 */
 	async close(): Promise<void> {
 		this.stream.end()
 	}
 
+	/**
+	 * Waits until the instance has received its initial synchronization message.
+	 *
+	 * @returns A promise that resolves once the connection is initialized
+	 */
 	async waitForConnection(): Promise<void> {
 		const poll = (resolv: any) => {
 			if (this.initialized) {
@@ -98,12 +128,22 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 
 	async updateConfig(_config: Record<string, any>): Promise<void> {}
 
+	/**
+	 * Marks the surface as ready.
+	 *
+	 * @returns A promise that resolves when readiness handling is complete.
+	 */
 	async ready(): Promise<void> {
 		this.logger.info('Surface ready!')
 	}
 
 	async setBrightness(_percent: number): Promise<void> {}
 
+	/**
+	 * Clears the surface by blanking every control.
+	 *
+	 * @returns A promise that resolves when the blanking is complete.
+	 */
 	async blank(): Promise<void> {
 		for (const control of this.layout.controls) {
 			await control.blank()
@@ -111,6 +151,14 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 	}
 
+	/**
+	 * Renders a control update if the surface is available and unlocked.
+	 *
+	 * @param signal Abort signal used to cancel the draw operation
+	 * @param drawProps The draw properties passed on to the relevant controls
+	 *
+	 * @returns A promise that resolves when the drawing is complete
+	 */
 	async draw(signal: AbortSignal, drawProps: SurfaceDrawProps): Promise<void> {
 		if (signal.aborted || this.context.isLocked) return
 
@@ -121,6 +169,12 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 	}
 
+	/**
+	 * Routes a variable update to the mapped control.
+	 *
+	 * @param name The variable name.
+	 * @param value The new variable value.
+	 */
 	onVariableValue(name: string, value: unknown): void {
 		const control = this.variableMap.get(name)
 
@@ -131,10 +185,20 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 
 	async showStatus(_signal: AbortSignal, _cardGenerator: CardGenerator, _statusMessage: string): Promise<void> {}
 
+	/**
+	 * Reports that no firmware update mechanism is available.
+	 *
+	 * @returns A promise that resolves to null
+	 */
 	async checkForFirmwareUpdates?(): Promise<SurfaceFirmwareUpdateInfo | null> {
 		return null
 	}
 
+	/**
+	 * Handles decoded RTP MIDI messages and routes them to the mapped control.
+	 *
+	 * @param message The decoded MIDI message.
+	 */
 	private handleMidi(message: MidiMessage) {
 		this.logger.debug(`Received MIDI: ${JSON.stringify(message)}`)
 
@@ -160,6 +224,11 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 	}
 
+	/**
+	 * Handles RTP MIDI control messages to track the surface heartbeat.
+	 *
+	 * @param message The incoming control message
+	 */
 	private handleControlMessage(message: ControlMessage) {
 		if (message.command !== 'synchronization') return
 
@@ -174,14 +243,28 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		this.heartbeat = setTimeout(this.handleDisconnect.bind(this), 10000)
 	}
 
+	/**
+	 * Disconnects the surface (typically after the heartbeat has timed out).
+	 */
 	private handleDisconnect() {
 		this.context.disconnect(new Error('Surface failed heartbeat. Disconnecting'))
 	}
 
+	/**
+	 * Sends a variable value back to the Companion context.
+	 *
+	 * @param name The variable name.
+	 * @param value The variable value.
+	 */
 	sendVariableValue(name: string, value: unknown): void {
 		this.context.sendVariableValue(name, value)
 	}
 
+	/**
+	 * Sends one or more MIDI messages to the surface.
+	 *
+	 * @param messages A single MIDI message or a list of messages to send.
+	 */
 	sendMidi(messages: MidiMessage | MidiMessage[]): void {
 		if (!Array.isArray(messages)) {
 			messages = [messages]
@@ -199,6 +282,12 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		}
 	}
 
+	/**
+	 * Sends a Companion context event for the specified control.
+	 *
+	 * @param eventType The event type to invoke on the context
+	 * @param id The control id
+	 */
 	sendEvent(eventType: ContextEventMap, id: string): void {
 		try {
 			if (this.context[eventType]) {

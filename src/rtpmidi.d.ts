@@ -1,4 +1,7 @@
 declare module 'rtpmidi' {
+	/**
+	 * Represents a control message received from an RTP MIDI stream
+	 */
 	export interface ControlMessage {
 		buffer: Buffer | undefined
 		start: number
@@ -11,5 +14,8 @@ declare module 'rtpmidi' {
 		timestamp3: Buffer
 	}
 
+	/**
+	 * Exposed manager for RTP MIDI connections
+	 */
 	export const manager: any
 }

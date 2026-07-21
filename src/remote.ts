@@ -11,12 +11,18 @@ import type { MCUDeviceInfo } from './main.js'
 import rtpmidi from 'rtpmidi'
 import { LayoutManager } from './layouts/manager.js'
 
+/**
+ * Config for an RTP MIDI connection to a remote MCU-compatible surface.
+ */
 export interface MCUConnectionConfig {
-	address: string
-	port: number
-	layout: string
+	address: string // IP address of the remote surface
+	port: number // Port number of the remote surface
+	layout: string // Layout identifier for the remote surface
 }
 
+/**
+ * Manages RTP MIDI connections for MCU-compatible remote surfaces.
+ */
 export class MCURemoteService
 	extends EventEmitter<SurfacePluginRemoteEvents<MCUDeviceInfo>>
 	implements SurfacePluginRemote<MCUDeviceInfo>
@@ -67,6 +73,11 @@ export class MCURemoteService
 		})
 	}
 
+	/**
+	 * Initializes the RTP MIDI session and starts the auto reconnect timer.
+	 *
+	 * @returns A promise that resolves when initialization is complete.
+	 */
 	async init(): Promise<void> {
 		this.connectionManager = rtpmidi.manager.createSession({
 			localName: 'Companion',
@@ -92,12 +103,23 @@ export class MCURemoteService
 		this.autoReconnect = setInterval(this.attemptAutoReconnect.bind(this), 10000)
 	}
 
+	/**
+	 * Tears down the RTP MIDI session and auto reconnect timer.
+	 *
+	 * @returns A promise that resolves when shutdown is complete.
+	 */
 	async destroy(): Promise<void> {
 		clearTimeout(this.autoReconnect)
 
 		this.connectionManager.end()
 	}
 
+	/**
+	 * Starts the remote surface connections requested by Companion.
+	 *
+	 * @param connectionInfos Connections to establish.
+	 * @returns A promise that resolves when all connection requests have been processed.
+	 */
 	async startConnections(connectionInfos: RemoteSurfaceConnectionInfo[]): Promise<void> {
 		this.logger.info(`Starting connections: ${connectionInfos.map((c) => c.connectionId).join(', ')}`)
 
@@ -145,6 +167,12 @@ export class MCURemoteService
 		}
 	}
 
+	/**
+	 * Closes requested connections using their ids.
+	 *
+	 * @param connectionIds Connection ids to stop.
+	 * @returns A promise that resolves when all disconnect requests have been processed.
+	 */
 	async stopConnections(connectionIds: string[]): Promise<void> {
 		this.logger.info(`Stopping connections: ${connectionIds.join(', ')}`)
 
@@ -169,10 +197,20 @@ export class MCURemoteService
 		}
 	}
 
+	/**
+	 * Rejects a detected surface by removing its active RTP MIDI stream.
+	 *
+	 * @param surfaceInfo The detected surface to reject.
+	 */
 	rejectSurface(surfaceInfo: DetectionSurfaceInfo<MCUDeviceInfo>): void {
 		this.removeConnection(`${surfaceInfo.pluginInfo.ip}:${surfaceInfo.pluginInfo.port}`)
 	}
 
+	/**
+	 * Scans for currently connected surfaces and attempts to connect to missing ones.
+	 *
+	 * @returns A promise that resolves to the list of detected surfaces.
+	 */
 	async scanForSurfaces(): Promise<DetectionSurfaceInfo<MCUDeviceInfo>[]> {
 		this.logger.info('Scanning for surfaces...')
 
@@ -205,7 +243,10 @@ export class MCURemoteService
 		return detected
 	}
 
-	private attemptAutoReconnect() {
+	/**
+	 * Attempts to reconnect to any active connections with missing streams.
+	 */
+	private attemptAutoReconnect(): void {
 		const existingStreams: any[] = this.connectionManager.streams
 
 		for (const addressKey of this.activeConnections.values()) {
@@ -226,6 +267,11 @@ export class MCURemoteService
 		}
 	}
 
+	/**
+	 * Removes all streams associated with the provided address key.
+	 *
+	 * @param addressKey The address key in the form `host:port`
+	 */
 	private removeConnection(addressKey: string): void {
 		const streams = this.connectionManager.getStreams()
 
@@ -236,10 +282,22 @@ export class MCURemoteService
 		}
 	}
 
-	private getAddressKeyFromStream(stream: any) {
+	/**
+	 * Builds an address key from a RTP MIDI stream.
+	 *
+	 * @param stream The RTP MIDI stream
+	 * @returns The stream address key in the form `host:port`
+	 */
+	private getAddressKeyFromStream(stream: any): string {
 		return `${stream?.rinfo1?.address}:${stream?.rinfo1?.port}`
 	}
 
+	/**
+	 * Creates a Companion surface detection object from a RTP MIDI stream.
+	 *
+	 * @param stream The RTP MIDI stream
+	 * @returns The detected surface object
+	 */
 	private createDeviceInfoFromStream(stream: any): DetectionSurfaceInfo<MCUDeviceInfo> {
 		const name = stream.name.replaceAll(/\x00/g, '').trim()
 
