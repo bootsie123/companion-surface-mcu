@@ -57,7 +57,7 @@ export class LayoutMCUPro extends Layout {
 		}
 
 		const gridMap: { [k: string]: any } = {
-			'2/8': 0, // Global View
+			'6/9': 0, // Global View
 			'3/9': 1, // F1
 			'3/10': 2, // F2
 			'3/11': 3, // F3
@@ -66,7 +66,7 @@ export class LayoutMCUPro extends Layout {
 			'3/14': 6, // F6
 			'3/15': 7, // F7
 			'3/16': 8, // F8
-			'5/8': 9, // Flip
+			'6/8': 9, // Flip
 		}
 
 		for (const control of this.layoutControls) {
@@ -368,7 +368,7 @@ export class LayoutMCUPro extends Layout {
 					note: 96,
 				},
 				definition: {
-					row: 11,
+					row: 9,
 					column: 11,
 				},
 				...this.commonControlOptions,

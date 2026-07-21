@@ -376,7 +376,7 @@ export class LayoutXTouch extends Layout {
 		createRow([84, 85, 86, 87, 88, 89, 90], 6) // Marker, Nudge, Cycle, ...
 
 		createRow(5, 7, 91) // Backwards, Forward, Stop, ...
-		createRow([46, 47, 101], 8) // Fader Bank Left, Fader Bank Right, Scrub
+		createRow([46, 47], 8) // Fader Bank Left, Fader Bank Right
 		createRow(2, 9, 48) // Channel Left, Channel Right
 
 		createRow([98, 100, 99], 11) // D-Pad Left, D-Pad Center, D-Pad Right
@@ -406,6 +406,21 @@ export class LayoutXTouch extends Layout {
 				definition: {
 					row: 12,
 					column: 10,
+				},
+				...this.commonControlOptions,
+			}),
+		)
+
+		// Scrub
+		controls.push(
+			new ControlButton({
+				midiTriggers: {
+					channel: 1,
+					note: 101,
+				},
+				definition: {
+					row: 11,
+					column: 13,
 				},
 				...this.commonControlOptions,
 			}),
