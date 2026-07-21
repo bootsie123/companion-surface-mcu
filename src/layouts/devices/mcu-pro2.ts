@@ -1,10 +1,18 @@
 import { ControlSegmentDisplay } from '../../controls/segment-display.js'
 import { LayoutMCUPro } from './mcu-pro.js'
 
+/**
+ * MCU Pro variant that uses combined segment displays.
+ */
 export class LayoutMCUPro2 extends LayoutMCUPro {
 	static id = 'mcupro2'
 	static label = 'MCU Pro (Combined Segment Displays)'
 
+	/**
+	 * Creates larger combined segment displays used by this variant.
+	 *
+	 * @returns An array of segment display instances
+	 */
 	createSegmentDisplays(): ControlSegmentDisplay[] {
 		const controls: ControlSegmentDisplay[] = []
 

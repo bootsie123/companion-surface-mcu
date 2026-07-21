@@ -1,10 +1,18 @@
 import { ControlSegmentDisplay } from '../../controls/segment-display.js'
 import { LayoutXTouch } from './xtouch.js'
 
+/**
+ * X-Touch variant that uses combined segment displays.
+ */
 export class LayoutXTouch2 extends LayoutXTouch {
 	static id = 'xtouch2'
 	static label = 'X-Touch (Combined Segment Displays)'
 
+	/**
+	 * Creates larger combined segment displays used by this variant.
+	 *
+	 * @returns An array of segment display instances
+	 */
 	createSegmentDisplays(): ControlSegmentDisplay[] {
 		const controls: ControlSegmentDisplay[] = []
 

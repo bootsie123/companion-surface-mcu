@@ -68,11 +68,9 @@ export interface ControlOptions {
 /**
  * Abstract base class for controls.
  *
- * ControlBase manages shared control behavior such as MIDI trigger hashing,
- * stable ID creation, style preset resolution, and messaging to the Companion
- * runtime. Subclasses override event handling, variable updates, and drawing
- * behavior for specific control types like buttons, encoders, faders, and
- * displays.
+ * Manages shared control behavior such as stable ID creation, MIDI trigger hashing for
+ * identification and matching within the Surface instance, style presets, and passing
+ * messages and events to Companion.
  */
 export abstract class ControlBase {
 	protected readonly options: ControlOptions // The configuration options provided when creating the control

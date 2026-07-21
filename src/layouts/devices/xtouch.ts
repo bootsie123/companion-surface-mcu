@@ -8,6 +8,9 @@ import { Layout } from '../base.js'
 import { ControlMeter } from '../../controls/meter.js'
 import { ControlSegmentDisplay } from '../../controls/segment-display.js'
 
+/**
+ * Style presets used by the X-Touch layout.
+ */
 const stylePresets: SurfaceSchemaLayoutDefinition['stylePresets'] = {
 	default: {},
 	button: {
@@ -31,6 +34,9 @@ const stylePresets: SurfaceSchemaLayoutDefinition['stylePresets'] = {
 	},
 }
 
+/**
+ * Layout implementation for the Behringer X-Touch control surface.
+ */
 export class LayoutXTouch extends Layout {
 	protected commonControlOptions: any = {}
 
@@ -97,10 +103,20 @@ export class LayoutXTouch extends Layout {
 		)
 	}
 
+	/**
+	 * Create button controls for the layout.
+	 *
+	 * @returns An array of button instances
+	 */
 	createButtons(): ControlButton[] {
 		return ([] as ControlButton[]).concat(this.createChannelStripButtons(), this.createButtonRows())
 	}
 
+	/**
+	 * Creates encoder controls for the layout.
+	 *
+	 * @returns An array of encoder instances
+	 */
 	createEncoders(): ControlBase[] {
 		const controls: ControlEncoder[] = []
 
@@ -144,6 +160,11 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates fader controls and their associated touch detection as buttons.
+	 *
+	 * @returns An array of fader and button instances
+	 */
 	createFaders(): ControlBase[] {
 		const controls: ControlBase[] = []
 
@@ -172,6 +193,11 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates the character displays used by the layout.
+	 *
+	 * @returns An array of display instances
+	 */
 	createDisplays(): ControlDisplay[] {
 		const controls: ControlDisplay[] = []
 
@@ -193,6 +219,11 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates 7-segment / small numeric displays used on the layout.
+	 *
+	 * @returns An array of segment display instances
+	 */
 	createSegmentDisplays(): ControlSegmentDisplay[] {
 		const controls: ControlSegmentDisplay[] = []
 
@@ -220,6 +251,11 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates meter controls for each channel.
+	 *
+	 * @returns An array of meter instances
+	 */
 	createMeters(): ControlMeter[] {
 		const controls: ControlMeter[] = []
 
@@ -235,6 +271,12 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates the standard channel strip buttons (rec/solo/mute/select) and
+	 * global buttons Flip and Global View.
+	 *
+	 * @returns An array of button instances
+	 */
 	private createChannelStripButtons(): ControlButton[] {
 		const controls: ControlButton[] = []
 
@@ -294,6 +336,11 @@ export class LayoutXTouch extends Layout {
 		return controls
 	}
 
+	/**
+	 * Creates auxiliary button rows used across the surface.
+	 *
+	 * @returns An array of button instances
+	 */
 	private createButtonRows(): ControlButton[] {
 		const controls: ControlButton[] = []
 
