@@ -5,6 +5,30 @@ const EMPTY = 0x0
 const DOT = 0x40
 
 /**
+ * Table mapping ASCII characters to their MCU specific hex value
+ */
+const ASCII_TABLE: { [k: string]: number } = (() => {
+	const table: { [k: string]: number } = {
+		'-': 0x2d,
+		_: 0x2e,
+	}
+
+	for (let i = 0; i < 26; i++) {
+		const char = String.fromCharCode(65 + i)
+
+		table[char] = i + 1
+	}
+
+	for (let i = 0; i <= 9; i++) {
+		const char = String.fromCharCode(48 + i)
+
+		table[char] = i + 0x30
+	}
+
+	return table
+})()
+
+/**
  * Options required to create a segmentdisplay control.
  */
 export interface ControlSegmentDisplayOptions extends ControlOptions {
@@ -60,15 +84,20 @@ export class ControlSegmentDisplay extends ControlBase {
 	drawText(text: string): void {
 		const chars: number[] = []
 
+		text = text.toUpperCase()
+
 		for (let i = 0; i < text.length; i++) {
 			if (chars.length >= this.width) break
 
-			const char = text.charCodeAt(i)
+			const char = text.substring(i, i + 1)
+
+			if (char === '.') continue
+
+			const asciiCode = ASCII_TABLE[char] ? ASCII_TABLE[char] : EMPTY
+
 			const nextChar = text.substring(i + 1, i + 2)
 
-			if (char === '.'.charCodeAt(0)) continue
-
-			chars.push(nextChar === '.' ? DOT | char : char)
+			chars.push(nextChar === '.' ? DOT | asciiCode : asciiCode)
 		}
 
 		for (let i = chars.length; i < this.width; i++) {
@@ -83,5 +112,12 @@ export class ControlSegmentDisplay extends ControlBase {
 				value: char,
 			})
 		}
+	}
+
+	/**
+	 * Blanks the display clearing any text.
+	 */
+	async blank(): Promise<void> {
+		this.drawText('')
 	}
 }
