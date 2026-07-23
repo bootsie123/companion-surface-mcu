@@ -60,7 +60,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-surface/base@npm:nightly":
+"@companion-surface/base@npm:^1.4.0-nightly":
   version: 1.4.0-nightly-main-20260714-131236-17ba70a
   resolution: "@companion-surface/base@npm:1.4.0-nightly-main-20260714-131236-17ba70a"
   checksum: 10c0/6cda7bb1aa57cd619e7b18cf60221d8e8c58d40ca8dc00020bfd08d1c6e83e70b6fb61c3ef7f6c200788c0020d3079cd36cd9ebb2410845f16cd374476a0c6e9
@@ -812,7 +812,7 @@ avahi_pub@TheThingSystem/node_avahi_pub:
   dependencies:
     "@companion-module/base": "npm:^2.1.2"
     "@companion-module/tools": "npm:^3.0.1"
-    "@companion-surface/base": "npm:nightly"
+    "@companion-surface/base": "npm:^1.4.0-nightly"
     "@lachenmayer/midi-messages": "npm:^1.0.1"
     "@types/node": "npm:^26.1.1"
     "@types/object-hash": "npm:^3"
