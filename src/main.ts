@@ -78,7 +78,7 @@ export const plugin: SurfacePlugin<MCUDeviceInfo> = {
 				surfaceLayout: surface.layout.getLayoutDefinition(),
 				pincodeMap: surface.layout.getPincodeMap(),
 				location: `${pluginInfo.ip}:${pluginInfo.port}`,
-				configFields: [],
+				configFields: surface.getConfigFields(),
 				transferVariables: surface.layout.getTransferVariables(),
 			},
 		}

@@ -1,6 +1,6 @@
 {
 	"name": "companion-surface-mcu",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "^2.1.2",
-		"@companion-surface/base": "nightly",
+		"@companion-surface/base": "^1.4.0-nightly",
 		"@lachenmayer/midi-messages": "^1.0.1",
 		"bitset": "^5.2.3",
 		"nanoid": "^6.0.0",

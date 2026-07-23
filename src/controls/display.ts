@@ -192,12 +192,14 @@ export class ControlDisplay extends ControlBase {
 			},
 		])
 
-		const blackBackground = tinycolor.equals(this.backgroundColor.color, displayColors[0].color)
+		if (this.config.autoBackground) {
+			const blackBackground = tinycolor.equals(this.backgroundColor.color, displayColors[0].color)
 
-		if (text.length > 0 && blackBackground) {
-			this.drawBackground('#fff')
-		} else if (text.length === 0 && !blackBackground) {
-			this.drawBackground('#000')
+			if (text.length > 0 && blackBackground) {
+				this.drawBackground('#fff')
+			} else if (text.length === 0 && !blackBackground) {
+				this.drawBackground('#000')
+			}
 		}
 	}
 

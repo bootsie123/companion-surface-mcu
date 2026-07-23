@@ -48,6 +48,8 @@ export enum ContextEventMap {
  * Defines the interface for sending messages and events from a control.
  */
 export interface ControlMessenger {
+	userConfig: Record<string, any>
+
 	sendMidi(message: MidiMessage | MidiMessage[]): void
 
 	sendEvent(eventType: ContextEventMap, id: string): void
@@ -141,6 +143,15 @@ export abstract class ControlBase {
 	 */
 	get midiTriggers(): string[] {
 		return this.midiTriggerHashes
+	}
+
+	/**
+	 * Returns the user config for the surface instance set in Companion
+	 *
+	 * @returns The surface instance user config from Companion
+	 */
+	protected get config(): Record<string, any> {
+		return this.options.messenger.userConfig
 	}
 
 	/**

@@ -2,6 +2,7 @@ import {
 	createModuleLogger,
 	type CardGenerator,
 	type ModuleLogger,
+	type SomeCompanionInputField,
 	type SurfaceContext,
 	type SurfaceDrawProps,
 	type SurfaceFirmwareUpdateInfo,
@@ -41,6 +42,8 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 
 	readonly surfaceId: string
 	readonly productName: string
+
+	readonly userConfig: Record<string, any> = {}
 
 	/**
 	 * Creates a new MCU surface instance.
@@ -101,6 +104,24 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 	}
 
 	/**
+	 * Returns the user configurable config fields for the surface instance
+	 *
+	 * @returns An array of user configurable config fields
+	 */
+	getConfigFields(): SomeCompanionInputField[] | null {
+		return [
+			{
+				id: 'autoBackground',
+				type: 'checkbox',
+				label: 'Auto LCD Background',
+				tooltip:
+					'Automatically sets the background color of an LCD to white when text is present and the background is set to black',
+				default: true,
+			},
+		]
+	}
+
+	/**
 	 * Closes the underlying RTP MIDI stream.
 	 *
 	 * @returns A promise that resolves when the stream has been closed
@@ -126,7 +147,16 @@ export class MCUInstance implements SurfaceInstance, ControlMessenger {
 		return new Promise(poll)
 	}
 
-	async updateConfig(_config: Record<string, any>): Promise<void> {}
+	/**
+	 * Updates the instance's user config with the provided config values
+	 *
+	 * @param config The config properties to update
+	 */
+	async updateConfig(config: Record<string, any>): Promise<void> {
+		if (config.autoBackground !== undefined) {
+			this.userConfig.autoBackground = config.autoBackground
+		}
+	}
 
 	/**
 	 * Marks the surface as ready.

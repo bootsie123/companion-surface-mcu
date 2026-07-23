@@ -21,7 +21,7 @@ See [HELP.md](./companion/HELP.md) for the in-Companion specific documentation.
 
 ## Requirements
 
-This module requires at least **Companion version >5.1.0** (currently in beta)
+This module requires at least **Companion version >=5.1.0** (currently in beta) due to relying on added support for LED rings introduced in `@companion-surface/base` version 1.4.0.
 
 ## Installation
 
@@ -53,7 +53,7 @@ yarn package
 Once the module has been built and packaged (see the [Local Development](#local-development) section) or downloaded from the releases section of the repository, it can be manually installed in Companion.
 
 1. Open the admin interface of Companion and navigate to the `Modules` tab
-2. Click on `Import module package` and select the `.tar` file obtained from earlier
+2. Click on `Import module package` and select the `.tgz` file obtained from earlier
 3. Next, go to the `Surfaces` tab and under `Surface Integrations and General Settings` click on `Add Surface Integration` and select `Mackie Control RTP MIDI`
 4. The module should now be fully installed!
 
@@ -74,6 +74,10 @@ The main scripts are:
 - `yarn lint` - Run ESLint
 - `yarn format` - Format the repository with Prettier
 - `yarn package` - Builds an installable package for Companion
+
+## Acknowledgements
+
+**Special thanks to:** [NicoG60](https://github.com/NicoG60) for fully documenting the [Mackie Control Protocol](https://github.com/NicoG60/TouchMCU/blob/main/doc/mackie_control_protocol.md). His work is something I find myself continually coming back to and without which this project would not have been possible.
 
 ## Contributing
 
