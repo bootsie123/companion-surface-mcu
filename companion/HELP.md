@@ -165,7 +165,7 @@ LCD displays are mapped to the Companion grid as regular buttons (see [Supported
 
 Text can be changed by going to the `Button --> Style --> Text` and then updating the `Button text string` value under the `Content` section. Text will automatically wrap from the top line to the bottom line and will be cut off appropriately when longer than the max amount of characters supported by the display.
 
-On the X-Touch, the `Background` style can be used to change the LCD's background color. Since those LCDs only support a limited amount of colors, the module will automatically choose the closest one supported. Keep in mind that if the background is set to black (#000) and text is provided, the background will automatically change to white.
+On the X-Touch, the `Background` style can be used to change the LCD's background color. Since those LCDs only support a limited amount of colors, the module will automatically choose the closest one supported. Keep in mind that if `Auto LCD Background` is enabled (enabled by default) then when the background is set to black (#000) and text is provided, the background will automatically change to white.
 
 ### Segment Displays
 
