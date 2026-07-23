@@ -5,7 +5,7 @@
 	"name": "Mackie Control RTP MIDI",
 	"shortname": "MCU RTP MIDI",
 	"description": "Discovers Mackie Control compatible surfaces over RTP MIDI",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license": "MIT",
 	"repository": "git+https://github.com/bootsie123/companion-surface-mcu.git",
 	"bugs": "https://github.com/bootsie123/companion-surface-mcu/issues",
