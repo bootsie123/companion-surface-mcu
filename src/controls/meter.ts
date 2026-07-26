@@ -123,7 +123,7 @@ export class ControlMeter extends ControlBase {
 			}
 		}
 
-		const val = parseInt(`0x${this.channel}${translated.toString(16)}`, 16)
+		const val = parseInt(`0x${this.channel - 1}${translated.toString(16)}`, 16)
 
 		this.sendMidi({
 			type: MidiTriggerType.Meter,
