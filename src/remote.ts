@@ -218,10 +218,12 @@ export class MCURemoteService
 
 		let attempting = 0
 
-		const existingStreams: any[] = this.connectionManager.getStreams()
+		const existingStreams: any[] = this.connectionManager.streams
 
 		for (const addressKey of this.activeConnections.values()) {
-			const stream = existingStreams.find((stream) => addressKey === this.getAddressKeyFromStream(stream))
+			const stream = existingStreams.find(
+				(stream) => addressKey === this.getAddressKeyFromStream(stream) || !stream.connectionInterval._destroyed,
+			)
 
 			if (stream) {
 				detected.push(this.createDeviceInfoFromStream(stream))
