@@ -1,6 +1,6 @@
 {
-	"name": "companion-surface-mcu",
-	"version": "1.0.3",
+	"name": "companion-surface-mackie-control",
+	"version": "1.0.4",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {

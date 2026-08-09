@@ -1,4 +1,4 @@
-# Mackie Control RTP MIDI
+# Mackie Control
 
 A companion surface module for Mackie Control-compatible devices over RTP MIDI.
 

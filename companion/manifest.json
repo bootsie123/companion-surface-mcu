@@ -1,9 +1,9 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"type": "surface",
-	"id": "mcu",
-	"name": "Mackie Control RTP MIDI",
-	"shortname": "MCU RTP MIDI",
+	"id": "mackie-control",
+	"name": "Mackie Control",
+	"shortname": "MC",
 	"description": "Discovers Mackie Control compatible surfaces over RTP MIDI",
 	"version": "1.0.1",
 	"license": "MIT",

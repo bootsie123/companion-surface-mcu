@@ -1,4 +1,4 @@
-## Mackie Control RTP MIDI
+## Mackie Control
 
 This surface module lets Companion connect to Mackie Control-compatible devices over RTP MIDI. Once connected, the device is exposed as a Companion remote surface so its buttons, encoders, faders, displays, meters, and other controls can be mapped and used as normal.
 
